@@ -3,7 +3,6 @@ package pkg10285;
 import java.util.*;
 
 class Main {
-	
     static int dimR, dimC, resultado;
     static int[][] matriz;
     static boolean[][] visitado;
@@ -11,8 +10,8 @@ class Main {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        int T = in.nextInt();
-        while(T-- > 0) {
+        int linea = in.nextInt();
+        while(linea -- > 0) {
             String nombre = in.next();
             dimR = in.nextInt();
             dimC = in.nextInt();
