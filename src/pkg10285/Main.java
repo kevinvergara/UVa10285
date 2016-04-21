@@ -1,111 +1,56 @@
 package pkg10285;
 
-import java.io.*;
 import java.util.*;
 
-class Main
-{
-    static String ReadLn (int maxLg)  
-    {
-        byte lin[] = new byte [maxLg];
-        int lg = 0, car = -1;
-        String line = "";
+class Main {
+	
+    static int dimR, dimC, resultado;
+    static int[][] matriz;
+    static boolean[][] visitado;
 
-        try
-        {
-            while (lg < maxLg)
-            {
-                car = System.in.read();
-                if ((car < 0) || (car == '\n')) break;
-                lin [lg++] += car;
-            }
-        }
-        catch (IOException e)
-        {
-            return (null);
-        }
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
 
-        if ((car < 0) && (lg == 0)) return (null);  
-        return (new String (lin, 0, lg));
-    }
+        int T = in.nextInt();
+        while(T-- > 0) {
+            String nombre = in.next();
+            dimR = in.nextInt();
+            dimC = in.nextInt();
+            matriz = new int[dimR][dimC];
+            visitado = new boolean[dimR][dimC];
 
-    public static void main (String args[])  
-    {
-        Main myWork = new Main();  
-        myWork.Begin();            
-    }
-    
-    private static int dimR, dimC;
-    private static int[][] matriz = new int[100+3][100+3];
-    private static int[][] dp = new int[100+3][100+3];
-    
-    void Begin()
-    {
-        String input, nombre = "";
-        StringTokenizer idata;
-        int casos = 0, contPrincipal = 1, cont = 0;
-        
-        input = Main.ReadLn (255);
-        idata = new StringTokenizer (input);
-        casos = Integer.parseInt (idata.nextToken());
-        
-        while ((input = Main.ReadLn (255)) != null){   
-            if(contPrincipal == 1){
-                idata = new StringTokenizer (input);
-                
-                nombre = idata.nextToken();
-                
-                dimR = Integer.parseInt (idata.nextToken());
-                
-                dimC = Integer.parseInt (idata.nextToken());
-                
-            }else if(contPrincipal == 2){
-                for(int i=0 ; i < dimR ; i++){
-                    if(i!=0){
-                        input = Main.ReadLn (255);
-                    }
-                    idata = new StringTokenizer (input);
-                    for(int j=0 ; j < dimC ; j++){
-                        matriz[i][j] = Integer.parseInt (idata.nextToken());                        
-                    }
+            for(int r = 0; r < dimR; ++r){
+                for (int c = 0; c < dimC; ++c){
+                    matriz[r][c] = in.nextInt();
                 }
-                
-                int max = -2147483647;
-                
-                for(int i = 0 ; i<dimR ; i++){
-                    for(int j = 0 ; j<dimC ; j++){
-                        int len = encontrar(i,j);
-                        if(len > max){
-                            max = len;
-                        }
-                    }
-                }
-                System.out.println(nombre+": "+max);
             }
-            cont++;
-            contPrincipal ++;
-            if(contPrincipal == 3) contPrincipal = 1;
+            resultado = 0;
+
+            for(int i = 0; i < dimR; ++i){
+                for(int j = 0; j < dimC; ++j){
+                    solucion(i, j, 101, 0);
+                }
+            }
+            
+            System.out.println(nombre + ": " + resultado);
         }
     }
     
-    int encontrar(int x, int y){
-        if ( dp [x] [y] != -1 ) return dp [x] [y];
+    static void solucion(int r, int c, int h, int sol) {
+        if (!validar(r, c, h)) {
+            resultado = Math.max(resultado, sol);
+            return;
+        }
+        visitado[r][c] = true;
+        solucion(r - 1, c, matriz[r][c], sol + 1);
+        solucion(r + 1, c, matriz[r][c], sol + 1);
+        solucion(r, c - 1, matriz[r][c], sol + 1);
+        solucion(r, c + 1, matriz[r][c], sol + 1);
 
-        int up = 0, down = 0, right = 0, left = 0;
-
-        if ( x != 0 && matriz [x - 1] [y] < matriz [x] [y] )
-            up = encontrar (x - 1, y) + 1;
-
-        if ( x != dimR - 1 && matriz [x + 1] [y] < matriz [x] [y] ) 
-            down = encontrar (x + 1, y) + 1;
-
-        if ( y != 0 && matriz [x] [y - 1] < matriz [x] [y] ) 
-            left = encontrar (x, y - 1) + 1;
-
-        if ( y != dimC - 1 && matriz [x] [y + 1] < matriz [x] [y] ) 
-            right = encontrar (x, y + 1) + 1;
-
-        return dp [x] [y] = Math.max (up, Math.max (down, Math.max (right, left)));
-
+        visitado[r][c] = false;
+    }
+    
+    static boolean validar(int r, int c, int h) {
+        return r >= 0 && c >= 0 && r < dimR && c < dimC && matriz[r][c] < h && !visitado[r][c];
     }
 }
